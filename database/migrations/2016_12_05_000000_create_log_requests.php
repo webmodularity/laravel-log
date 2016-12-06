@@ -30,8 +30,10 @@ class CreateLogRequests extends Migration
             $table->unsignedInteger('user_agent_id')->nullable();
             $table->string('session_id', 255)->nullable();
             $table->timestamp('created_at');
-            $table->foreign('user_agent_id')->references('id')->on('log_user_agents')->onUpdate('cascade');
-            $table->foreign('url_path_id')->references('id')->on('log_url_paths')->onUpdate('cascade');
+            $table->index('created_at');
+            $table->foreign('user_agent_id')->references('id')->on('log_user_agents')->onUpdate('cascade')->onDelete('set null');
+            $table->foreign('url_path_id')->references('id')->on('log_url_paths')->onUpdate('cascade')->onDelete('set null');
+            $table->foreign('session_id')->references('id')->on('sessions')->onUpdate('cascade')->onDelete('set null');
         });
 
         DB::statement('ALTER TABLE `log_user_agents` ADD `user_agent_hash` BINARY(16) NOT NULL, ADD UNIQUE INDEX user_agent_hash_unique (`user_agent_hash`)');

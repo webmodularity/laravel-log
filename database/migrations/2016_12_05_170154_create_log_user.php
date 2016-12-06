@@ -16,7 +16,6 @@ class CreateLogUser extends Migration
         Schema::create('log_users', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id');
-            $table->unsignedTinyInteger('event_type');
             $table->timestamps();
         });
     }
