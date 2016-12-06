@@ -1,0 +1,20 @@
+{
+  "name": "webmod/laravel-log",
+  "description": "WM Package that adds tables and functionality for logs.",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Rory Hellyer",
+      "email": "rory@webmodularity.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "WebModularity\\LaravelLog\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=5.6.4",
+    "laravel/framework": "~5.3.0"
+  }
+}
