@@ -15,8 +15,13 @@ class CreateLogUser extends Migration
     {
         Schema::create('log_users', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('user_id');
-            $table->timestamps();
+            $table->unsignedInteger('request_id');
+            $table->unsignedInteger('user_id')->nullable();
+            $table->unsignedTinyInteger('user_action');
+            $table->index(['user_id', 'user_action']);
+            $table->unique(['user_id', 'request_id', 'user_action']);
+            $table->foreign('request_id')->references('id')->on('log_requests')->onUpdate('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 
