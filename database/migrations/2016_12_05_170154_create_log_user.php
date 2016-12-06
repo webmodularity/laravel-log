@@ -13,7 +13,7 @@ class CreateLogUser extends Migration
      */
     public function up()
     {
-        Schema::create('log_user', function (Blueprint $table) {
+        Schema::create('log_users', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id');
             $table->unsignedTinyInteger('event_type');
