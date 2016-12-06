@@ -28,6 +28,6 @@ class CreateLogUser extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop('log_users');
     }
 }

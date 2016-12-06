@@ -15,7 +15,6 @@ class CreateLogRequests extends Migration
     {
         Schema::create('log_user_agents', function (Blueprint $table) {
             $table->increments('id');
-            $table->uuid('user_agent_hash')->unique();
             $table->text('user_agent');
         });
 
@@ -35,7 +34,8 @@ class CreateLogRequests extends Migration
             $table->foreign('url_path_id')->references('id')->on('log_url_paths');
         });
 
-        DB::statement('ALTER TABLE log_requests ADD ip_address VARBINARY(16)');
+        DB::statement('ALTER TABLE `log_user_agents` ADD `user_agent_hash` BINARY(16), ADD UNIQUE INDEX user_agent_hash_unique (`user_agent_hash`)');
+        DB::statement('ALTER TABLE `log_requests` ADD `ip_address` VARBINARY(16) AFTER `user_agent_id`');
     }
 
     /**
