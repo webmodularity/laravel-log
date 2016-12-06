@@ -15,12 +15,13 @@ class CreateLogRequests extends Migration
     {
         Schema::create('log_user_agents', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('user_agent')->unique();
+            $table->uuid('user_agent_hash')->unique();
+            $table->text('user_agent');
         });
 
         Schema::create('log_url_paths', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('url_path')->unique();
+            $table->string('url_path', 255)->unique();
         });
 
         Schema::create('log_requests', function (Blueprint $table) {
