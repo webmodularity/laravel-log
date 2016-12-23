@@ -13,16 +13,6 @@ class CreateLogRequests extends Migration
      */
     public function up()
     {
-        Schema::create('log_user_agents', function (Blueprint $table) {
-            $table->increments('id');
-            $table->text('user_agent');
-        });
-
-        Schema::create('log_url_paths', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('url_path', 255)->unique();
-        });
-
         Schema::create('log_requests', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('url_path_id')->nullable();
@@ -36,7 +26,6 @@ class CreateLogRequests extends Migration
             $table->foreign('session_id')->references('id')->on('sessions')->onUpdate('cascade')->onDelete('set null');
         });
 
-        DB::statement('ALTER TABLE `log_user_agents` ADD `user_agent_hash` BINARY(16) NOT NULL, ADD UNIQUE INDEX user_agent_hash_unique (`user_agent_hash`)');
         DB::statement('ALTER TABLE `log_requests` ADD `ip_address` VARBINARY(16) AFTER `user_agent_id`');
     }
 
@@ -48,7 +37,5 @@ class CreateLogRequests extends Migration
     public function down()
     {
         Schema::drop('log_requests');
-        Schema::drop('log_url_paths');
-        Schema::drop('log_user_agents');
     }
 }
