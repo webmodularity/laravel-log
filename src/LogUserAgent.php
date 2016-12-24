@@ -22,13 +22,13 @@ class LogUserAgent extends Model
         return hex2bin(md5($userAgent));
     }
 
-    public function firstOrCreateFromUserAgentString($userAgentString)
+    public static function firstOrCreateFromUserAgentString($userAgentString)
     {
         if (empty($userAgentString)) {
             return null;
         }
 
-        if (! is_null($userAgent = $this->where([
+        if (! is_null($userAgent = static::where([
             'user_agent_hash' => static::hashUserAgent($userAgentString)
         ])->first())) {
             return $userAgent;
