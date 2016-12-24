@@ -22,7 +22,7 @@ class LogUserAgent extends Model
         return hex2bin(md5($userAgent));
     }
 
-    public static function firstOrCreateFromUserAgentString($userAgentString)
+    public static function findFromUserAgentString($userAgentString)
     {
         if (empty($userAgentString)) {
             return null;

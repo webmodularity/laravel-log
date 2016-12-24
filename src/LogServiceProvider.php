@@ -14,5 +14,8 @@ class LogServiceProvider extends ServiceProvider
     public function boot() {
         // Migrations
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        // Observers
+        LogUserAgent::observe(LogUserAgentObserver::class);
     }
 }
