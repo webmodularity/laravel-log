@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class LogUserAgent extends Model
 {
-    protected $fillable = ['user_agent'];
-
     public $timestamps = false;
 
     /**
@@ -20,22 +18,5 @@ class LogUserAgent extends Model
     public static function hashUserAgent($userAgent)
     {
         return hex2bin(md5($userAgent));
-    }
-
-    public static function findFromUserAgentString($userAgentString)
-    {
-        if (empty($userAgentString)) {
-            return null;
-        }
-
-        if (! is_null($userAgent = static::where([
-            'user_agent_hash' => static::hashUserAgent($userAgentString)
-        ])->first())) {
-            return $userAgent;
-        }
-
-        $userAgent = static::create(['user_agent' => $userAgentString]);
-
-        return $userAgent;
     }
 }
