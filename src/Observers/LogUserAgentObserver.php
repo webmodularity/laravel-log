@@ -3,6 +3,7 @@
 namespace WebModularity\LaravelLog\Observers;
 
 use WebModularity\LaravelLog\LogUserAgent;
+use Log;
 
 class LogUserAgentObserver
 {
@@ -15,6 +16,7 @@ class LogUserAgentObserver
 
     public function saving(LogUserAgent $logUserAgent)
     {
+        Log::error(LogUserAgent::hashUserAgent($logUserAgent->user_agent));
         $logUserAgent->user_agent_hash = LogUserAgent::hashUserAgent($logUserAgent->user_agent);
     }
 }
