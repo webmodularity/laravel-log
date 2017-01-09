@@ -9,6 +9,13 @@ class LogUserAgent extends Model
     public $timestamps = false;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['user_agent', 'user_agent_hash'];
+
+    /**
      * Creates a hash from user_agent string
      *
      * @param $userAgent string The user_agent string sent by browser during http request
