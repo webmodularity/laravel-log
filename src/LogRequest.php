@@ -4,6 +4,7 @@ namespace WebModularity\LaravelLog;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use ReflectionClass;
 
 /**
  * WebModularity\LaravelLog\LogRequest
@@ -21,7 +22,24 @@ use Illuminate\Http\Request;
  */
 class LogRequest extends Model
 {
+    const METHOD_GET = 1;
+    const METHOD_POST = 2;
+
     public $timestamps = false;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'url_path_id',
+        'url_query_string',
+        'request_method',
+        'user_agent_id',
+        'ip_address',
+        'session_id'
+    ];
 
     public function urlPath()
     {
@@ -35,6 +53,31 @@ class LogRequest extends Model
 
     public static function createFromRequest(Request $request)
     {
+        static::create([
+            'url_path' => LogUrlPath::firstOrCreate(['url_path' => $request->path()]),
+            'url_query_string' => $request->query(),
+            'request_method' => static::getRequestMethodId($request->method()),
+            'user_agent_id' => LogUserAgent::firstOrCreateFromUserAgent($request->header('User-Agent')),
+            'ip_address' => inet_pton($request->ip()),
+            'session_id' => static::getSessionIdFromRequest($request)
+        ]);
+    }
 
+    public static function getRequestMethodId($requestMethod)
+    {
+        $class = new ReflectionClass(__CLASS__);
+        foreach ($class->getConstants() as $constantName => $constantValue) {
+            if ('METHOD_' . $requestMethod == $constantName) {
+                return $constantValue;
+            }
+        }
+        return null;
+    }
+
+    public static function getSessionIdFromRequest(Request $request)
+    {
+        return $request->session()->isValidId($request->session()->getId())
+            ? $request->session()->getId()
+            : null;
     }
 }

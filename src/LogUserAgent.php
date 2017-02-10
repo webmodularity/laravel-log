@@ -39,7 +39,7 @@ class LogUserAgent extends Model
      * @param string $userAgentString The User-Agent string fetched from Request
      * @return Model LogUserAgent model
      */
-    public static function findFromUserAgent($userAgentString)
+    public static function firstOrCreateFromUserAgent($userAgentString)
     {
         return static::firstOrCreate(
             ['user_agent_hash' => static::hashUserAgent($userAgentString)],
