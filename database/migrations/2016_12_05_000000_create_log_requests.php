@@ -17,6 +17,7 @@ class CreateLogRequests extends Migration
             $table->increments('id');
             $table->unsignedInteger('url_path_id')->nullable();
             $table->text('url_query_string')->nullable();
+            $table->unsignedTinyInteger('request_method')->nullable();
             $table->unsignedInteger('user_agent_id')->nullable();
             $table->string('session_id', 255)->nullable();
             $table->timestamp('created_at');

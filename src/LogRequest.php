@@ -3,6 +3,7 @@
 namespace WebModularity\LaravelLog;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 /**
  * WebModularity\LaravelLog\LogRequest
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property int $url_path_id
  * @property string $url_query_string
+ * @property int $request_method
  * @property int $user_agent_id
  * @property mixed $ip_address
  * @property string $session_id
@@ -29,5 +31,10 @@ class LogRequest extends Model
     public function userAgent()
     {
         return $this->belongsTo('WebModularity\LaravelLog\LogUserAgent');
+    }
+
+    public static function createFromRequest(Request $request)
+    {
+
     }
 }
