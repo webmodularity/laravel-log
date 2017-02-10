@@ -21,9 +21,22 @@ class LogUserAgent extends Model
      * @param $userAgent string The user_agent string sent by browser during http request
      * @return string Hash of user agent in binary format
      */
-
     public static function hashUserAgent($userAgent)
     {
         return hex2bin(md5($userAgent));
+    }
+
+    /**
+     * Takes a User-Agent string and returns the associated LogUserAgent Model.
+     * Will create new record if no LogUserAgent is found.
+     * @param string $userAgentString The User-Agent string fetched from Request
+     * @return Model LogUserAgent model
+     */
+    public static function findFromUserAgent($userAgentString)
+    {
+        return static::firstOrCreate(
+            ['user_agent_hash' => static::hashUserAgent($userAgentString)],
+            ['user_agent' => $userAgentString]
+        );
     }
 }
