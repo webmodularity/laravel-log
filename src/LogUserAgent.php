@@ -4,6 +4,13 @@ namespace WebModularity\LaravelLog;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * WebModularity\LaravelLog\LogUserAgent
+ *
+ * @property int $id
+ * @property string $user_agent
+ * @property mixed $user_agent_hash
+ */
 class LogUserAgent extends Model
 {
     public $timestamps = false;
