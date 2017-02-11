@@ -51,27 +51,43 @@ class LogRequest extends Model
         return $this->belongsTo('WebModularity\LaravelLog\LogUserAgent');
     }
 
+    /**
+     * Helper method used to create new LogRequest model using HTTP Request
+     * @param Request $request
+     * @return static
+     */
     public static function createFromRequest(Request $request)
     {
-        static::create([
+        return static::create([
             'url_path' => LogUrlPath::firstOrCreate(['url_path' => $request->path()]),
             'url_query_string' => $request->query(),
-            'request_method' => static::getRequestMethodId($request->method()),
+            'request_method' => static::getRequestMethodId($request),
             'user_agent_id' => LogUserAgent::firstOrCreateFromUserAgent($request->header('User-Agent')),
             'ip_address' => inet_pton($request->ip()),
             'session_id' => static::getSessionIdFromRequest($request)
         ]);
     }
 
-    public static function getRequestMethodId($requestMethod)
+    /**
+     * Attempts to convert method passed from HTTP Request into ID stored in constants starting with METHOD_ for storage
+     * @param Request $request
+     * @return int|null The ID associated with METHOD_ constant or null if no match found
+     */
+    public static function getRequestMethodId(Request $request)
     {
         $class = new ReflectionClass(__CLASS__);
+        $requestMethod = static::getMethodFromRequest($request);
         foreach ($class->getConstants() as $constantName => $constantValue) {
             if ('METHOD_' . $requestMethod == $constantName) {
                 return $constantValue;
             }
         }
         return null;
+    }
+
+    public static function getMethodFromRequest(Request $request)
+    {
+        return $request->method();
     }
 
     public static function getSessionIdFromRequest(Request $request)

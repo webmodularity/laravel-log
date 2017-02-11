@@ -37,7 +37,7 @@ class LogUserAgent extends Model
      * Takes a User-Agent string and returns the associated LogUserAgent Model.
      * Will create new record if no LogUserAgent is found.
      * @param string $userAgentString The User-Agent string fetched from Request
-     * @return Model LogUserAgent model
+     * @return LogUserAgent model
      */
     public static function firstOrCreateFromUserAgent($userAgentString)
     {
