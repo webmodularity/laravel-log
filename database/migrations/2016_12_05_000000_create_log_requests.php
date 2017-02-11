@@ -30,7 +30,7 @@ class CreateLogRequests extends Migration
         });
 
         DB::statement('ALTER TABLE `log_requests` ADD `ip_address` VARBINARY(16) AFTER `user_agent_id`');
-        DB::statement('ALTER TABLE `log_requests` ADD INDEX `log_requests_ip_address_created_at` (`ip_address`, `created_at`)');
+        DB::statement('ALTER TABLE `log_requests` ADD INDEX `log_requests_ip_address_created_at_index` (`ip_address`, `created_at`)');
     }
 
     /**
