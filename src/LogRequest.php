@@ -51,6 +51,17 @@ class LogRequest extends Model
         return $this->belongsTo('WebModularity\LaravelLog\LogUserAgent');
     }
 
+
+    public function getIpAddressAttribute($value)
+    {
+        return inet_ntop($value);
+    }
+
+    public function setIpAddressAttribute($value)
+    {
+        $this->attributes['ip_address'] = inet_pton($value);
+    }
+
     /**
      * Helper method used to create new LogRequest model using HTTP Request
      * @param Request $request
@@ -61,19 +72,20 @@ class LogRequest extends Model
         return static::create([
             'url_path_id' => static::getUrlPathIdFromRequest($request),
             'url_query_string' => static::getQueryStringFromRequest($request),
-            'request_method' => static::getRequestMethodId($request),
+            'request_method' => static::getRequestMethodIdFromRequest($request),
             'user_agent_id' => static::getUserAgentIdFromRequest($request),
-            'ip_address' => static::getIpAddressBinaryFromRequest($request),
+            'ip_address' => static::getIpAddressFromRequest($request),
             'session_id' => static::getSessionIdFromRequest($request)
         ]);
     }
 
     /**
-     * Attempts to convert method passed from HTTP Request into ID stored in constants starting with METHOD_ for storage
+     * Attempts to convert method passed from HTTP Request into ID stored in constants
+     * starting with METHOD_ for storage.
      * @param Request $request
      * @return int|null The ID associated with METHOD_ constant or null if no match found
      */
-    public static function getRequestMethodId(Request $request)
+    public static function getRequestMethodIdFromRequest(Request $request)
     {
         $class = new ReflectionClass(__CLASS__);
         $requestMethod = static::getMethodFromRequest($request);
@@ -120,9 +132,8 @@ class LogRequest extends Model
         return !is_null($userAgent) ? $userAgent->id : null;
     }
 
-    public static function getIpAddressBinaryFromRequest(Request $request)
+    public static function getIpAddressFromRequest(Request $request)
     {
-        //return null;
-        return inet_pton($request->ip());
+        return $request->ip();
     }
 }
