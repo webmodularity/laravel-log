@@ -59,7 +59,7 @@ class LogRequest extends Model
     public static function createFromRequest(Request $request)
     {
         return static::create([
-            'url_path' => LogUrlPath::firstOrCreate(['url_path' => $request->path()]),
+            'url_path_id' => LogUrlPath::firstOrCreate(['url_path' => $request->path()]),
             'url_query_string' => $request->query(),
             'request_method' => static::getRequestMethodId($request),
             'user_agent_id' => LogUserAgent::firstOrCreateFromUserAgent($request->header('User-Agent')),
