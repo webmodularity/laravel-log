@@ -13,4 +13,11 @@ use Illuminate\Database\Eloquent\Model;
 class LogUrlPath extends Model
 {
     public $timestamps = false;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['url_path'];
 }
