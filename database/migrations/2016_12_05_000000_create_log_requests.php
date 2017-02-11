@@ -23,7 +23,6 @@ class CreateLogRequests extends Migration
             $table->timestamp('created_at');
             $table->index('created_at');
             $table->index(['session_id', 'created_at']);
-            $table->index(['ip_address', 'created_at']);
             $table->index(['url_path_id', 'created_at']);
             $table->foreign('user_agent_id')->references('id')->on('log_user_agents')->onUpdate('cascade')->onDelete('set null');
             $table->foreign('url_path_id')->references('id')->on('log_url_paths')->onUpdate('cascade')->onDelete('set null');
@@ -31,6 +30,7 @@ class CreateLogRequests extends Migration
         });
 
         DB::statement('ALTER TABLE `log_requests` ADD `ip_address` VARBINARY(16) AFTER `user_agent_id`');
+        DB::statement('ALTER TABLE `log_requests` ADD INDEX `log_requests_ip_address_created_at` (`ip_address`, `created_at`)');
     }
 
     /**
