@@ -62,7 +62,7 @@ class LogRequest extends Model
             'url_path_id' => LogUrlPath::firstOrCreate(['url_path' => $request->path()]),
             'url_query_string' => $request->query(),
             'request_method' => static::getRequestMethodId($request),
-            'user_agent_id' => LogUserAgent::firstOrCreateFromUserAgent($request->header('User-Agent')),
+            'user_agent_id' => LogUserAgent::firstOrCreateFromUserAgent($request->header('User-Agent'))->id,
             'ip_address' => inet_pton($request->ip()),
             'session_id' => static::getSessionIdFromRequest($request)
         ]);
