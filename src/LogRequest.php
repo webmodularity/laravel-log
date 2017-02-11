@@ -59,11 +59,11 @@ class LogRequest extends Model
     public static function createFromRequest(Request $request)
     {
         return static::create([
-            'url_path_id' => LogUrlPath::firstOrCreate(['url_path' => $request->path()])->id,
-            'url_query_string' => $request->query(),
+            'url_path_id' => static::getUrlPathIdFromRequest($request),
+            'url_query_string' => static::getQueryStringFromRequest($request),
             'request_method' => static::getRequestMethodId($request),
-            'user_agent_id' => LogUserAgent::firstOrCreateFromUserAgent($request->header('User-Agent'))->id,
-            'ip_address' => inet_pton($request->ip()),
+            'user_agent_id' => static::getUserAgentIdFromRequest($request),
+            'ip_address' => static::getIpAddressBinaryFromRequest($request),
             'session_id' => static::getSessionIdFromRequest($request)
         ]);
     }
@@ -95,5 +95,33 @@ class LogRequest extends Model
         return $request->session()->isValidId($request->session()->getId())
             ? $request->session()->getId()
             : null;
+    }
+
+    public static function getQueryStringFromRequest(Request $request)
+    {
+        $query = $request->query();
+
+        if (is_array($query)) {
+            return implode("&", $query);
+        }
+
+        return $query;
+    }
+
+    public static function getUrlPathIdFromRequest(Request $request)
+    {
+        $urlPath = LogUrlPath::firstOrCreate(['url_path' => $request->path()]);
+        return !is_null($urlPath) ? $urlPath->id : null;
+    }
+
+    public static function getUserAgentIdFromRequest(Request $request)
+    {
+        $userAgent = LogUserAgent::firstOrCreateFromUserAgent($request->header('User-Agent'));
+        return !is_null($userAgent) ? $userAgent->id : null;
+    }
+
+    public static function getIpAddressBinaryFromRequest(Request $request)
+    {
+        return inet_pton($request->ip());
     }
 }
