@@ -102,7 +102,7 @@ class LogRequest extends Model
         $query = $request->query();
 
         if (is_array($query)) {
-            return implode("&", $query);
+            return http_build_query($query);
         }
 
         return $query;
@@ -122,7 +122,7 @@ class LogRequest extends Model
 
     public static function getIpAddressBinaryFromRequest(Request $request)
     {
-        return null;
-        //return inet_pton($request->ip());
+        //return null;
+        return inet_pton($request->ip());
     }
 }
