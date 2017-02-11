@@ -122,6 +122,7 @@ class LogRequest extends Model
 
     public static function getIpAddressBinaryFromRequest(Request $request)
     {
-        return inet_pton($request->ip());
+        return null;
+        //return inet_pton($request->ip());
     }
 }
