@@ -25,7 +25,7 @@ class LogRequest extends Model
     const METHOD_GET = 1;
     const METHOD_POST = 2;
 
-    public $timestamps = false;
+    const UPDATED_AT = null;
 
     /**
      * The attributes that are mass assignable.
