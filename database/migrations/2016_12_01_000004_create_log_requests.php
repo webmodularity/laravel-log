@@ -29,7 +29,7 @@ class CreateLogRequests extends Migration
             $table->foreign('query_string_id')->references('id')->on('log_query_strings')->onUpdate('cascade');
         });
 
-        DB::statement('ALTER TABLE `log_requests` ADD `ip_address` VARBINARY(16) AFTER `user_agent_id`');
+        DB::statement('ALTER TABLE `log_requests` ADD `ip_address` VARBINARY(16) AFTER `user_agent_id` NOT NULL');
         DB::statement('ALTER TABLE `log_requests` ADD UNIQUE `log_requests_unique` (`request_method`, `url_path_id`, `query_string_id`, `user_agent_id`, `ip_address`, `session_id`)');
     }
 
