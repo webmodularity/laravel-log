@@ -2,7 +2,6 @@
 
 namespace WebModularity\LaravelLog;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use ReflectionClass;
