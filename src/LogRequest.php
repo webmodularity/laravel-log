@@ -64,18 +64,6 @@ class LogRequest extends Model
         return $this->belongsTo(LogIpAddress::class);
     }
 
-    public function scopeLeftJoinIpAddress(Builder $query)
-    {
-        return $query->addSelect('ip_address')
-            ->leftJoin('log_ip_addresses', 'log_ip_addresses.id', '=', 'log_requests.ip_address_id');
-    }
-
-    public function scopeLeftJoinUrlPath(Builder $query)
-    {
-        return $query->addSelect('url_path')
-            ->leftJoin('log_url_paths', 'log_url_paths.id', '=', 'log_requests.url_path_id');
-    }
-
     /**
      * Helper method used to create new LogRequest model using HTTP Request
      * @param Request $request
