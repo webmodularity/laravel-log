@@ -38,7 +38,7 @@ class LogRequest extends Model
         'request_method',
         'query_string_id',
         'user_agent_id',
-        'ip_address',
+        'ip_address_id',
         'session_id'
     ];
 
