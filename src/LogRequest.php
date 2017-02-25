@@ -106,10 +106,11 @@ class LogRequest extends Model
 
     public static function getIpAddressIdFromRequest(Request $request)
     {
-        return LogIpAddress::firstOrCreate(
-            ['ip_address' => LogIpAddress::encryptIpAddress($request->ip())],
-            ['ip_address' => $request->ip()]
-        )->id;
+        $ipAddress = $request->ip();
+        $logIpAddress = LogIpAddress::where('ip_address', LogIpAddress::encryptIpAddress($ipAddress))->first();
+        return !is_null($logIpAddress)
+            ? $logIpAddress->id
+            : LogIpAddress::create(['ip_address' => $ipAddress])->id;
     }
 
     public static function getUrlPathIdFromRequest(Request $request)
