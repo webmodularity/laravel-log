@@ -69,7 +69,7 @@ class LogRequest extends Model
             'url_path_id' => static::getUrlPathIdFromRequest($request),
             'query_string_id' => static::getQueryStringIdFromRequest($request),
             'user_agent_id' => static::getUserAgentIdFromRequest($request),
-            'ip_address' => static::getIpAddressIdFromRequest($request),
+            'ip_address_id' => static::getIpAddressIdFromRequest($request),
             'session_id' => static::getSessionIdFromRequest($request)
         ]);
     }
