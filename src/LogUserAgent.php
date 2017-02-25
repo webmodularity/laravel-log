@@ -22,8 +22,6 @@ class LogUserAgent extends Model
      */
     protected $fillable = ['user_agent', 'user_agent_hash'];
 
-//
-
     /**
      * Creates a hash from user_agent string
      *

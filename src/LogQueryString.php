@@ -23,13 +23,6 @@ class LogQueryString extends Model
     protected $fillable = ['query_string', 'query_string_hash'];
 
     /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    //protected $hidden = ['query_string_hash'];
-
-    /**
      * Creates a hash from query string
      * @param $queryString string The query string sent by browser during http request
      * @return mixed Hash of query string in binary format

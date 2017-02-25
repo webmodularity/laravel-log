@@ -57,17 +57,6 @@ class LogRequest extends Model
         return $this->belongsTo(LogQueryString::class);
     }
 
-
-    public function getIpAddressAttribute($value)
-    {
-        return inet_ntop($value);
-    }
-
-    public function setIpAddressAttribute($value)
-    {
-        $this->attributes['ip_address'] = inet_pton($value);
-    }
-
     /**
      * Helper method used to create new LogRequest model using HTTP Request
      * @param Request $request
@@ -80,7 +69,7 @@ class LogRequest extends Model
             'url_path_id' => static::getUrlPathIdFromRequest($request),
             'query_string_id' => static::getQueryStringIdFromRequest($request),
             'user_agent_id' => static::getUserAgentIdFromRequest($request),
-            'ip_address' => static::getIpAddressFromRequest($request),
+            'ip_address' => static::getIpAddressIdFromRequest($request),
             'session_id' => static::getSessionIdFromRequest($request)
         ]);
     }
@@ -112,7 +101,15 @@ class LogRequest extends Model
     {
         return $request->session()->isValidId($request->session()->getId())
             ? $request->session()->getId()
-            : '';
+            : null;
+    }
+
+    public static function getIpAddressIdFromRequest(Request $request)
+    {
+        return LogIpAddress::firstOrCreate(
+            ['ip_address' => LogIpAddress::encryptIpAddress($request->ip())],
+            ['ip_address' => $request->ip()]
+        )->id;
     }
 
     public static function getUrlPathIdFromRequest(Request $request)
@@ -122,7 +119,10 @@ class LogRequest extends Model
 
     public static function getQueryStringIdFromRequest(Request $request)
     {
-        $query = $request->query() ?: '';
+        $query = $request->query();
+        if (empty($query)) {
+            return null;
+        }
         $queryString = is_array($query) ? http_build_query($query) : $query;
         return LogQueryString::firstOrCreateFromQueryString($queryString)->id;
     }
@@ -131,10 +131,5 @@ class LogRequest extends Model
     {
         $userAgent = $request->header('User-Agent') ?: '';
         return LogUserAgent::firstOrCreateFromUserAgent($userAgent)->id;
-    }
-
-    public static function getIpAddressFromRequest(Request $request)
-    {
-        return $request->ip();
     }
 }
