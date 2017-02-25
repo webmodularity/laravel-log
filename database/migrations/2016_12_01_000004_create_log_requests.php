@@ -22,7 +22,10 @@ class CreateLogRequests extends Migration
             $table->string('session_id', 255)->nullable();
             $table->unsignedInteger('query_string_id')->nullable();
             $table->timestamp('created_at');
-            $table->unique(['request_method', 'ip_address_id', 'url_path_id', 'user_agent_id', 'session_id', 'query_string_id']);
+            $table->unique(
+                ['request_method', 'ip_address_id', 'url_path_id', 'user_agent_id', 'session_id', 'query_string_id'],
+                'log_requests_unique'
+            );
             $table->index('created_at');
             $table->index(['ip_address_id', 'created_at']);
             $table->index(['url_path_id', 'created_at']);
