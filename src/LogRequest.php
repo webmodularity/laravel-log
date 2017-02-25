@@ -20,6 +20,7 @@ use ReflectionClass;
  * @property-read \WebModularity\LaravelLog\LogUrlPath $urlPath
  * @property-read \WebModularity\LaravelLog\LogUserAgent $userAgent
  * @property-read \WebModularity\LaravelLog\LogQueryString $queryString
+ * @property-read \WebModularity\LaravelLog\LogIpAddress $ipAddress
  */
 class LogRequest extends Model
 {
@@ -55,6 +56,11 @@ class LogRequest extends Model
     public function queryString()
     {
         return $this->belongsTo(LogQueryString::class);
+    }
+
+    public function ipAddress()
+    {
+        return $this->belongsTo(LogIpAddress::class);
     }
 
     /**
