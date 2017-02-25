@@ -69,7 +69,7 @@ class LogRequest extends Model
      */
     public static function createFromRequest(Request $request)
     {
-        return static::create([
+        return static::firstOrCreate([
             'url_path_id' => static::getUrlPathIdFromRequest($request),
             'url_query_string' => static::getQueryStringFromRequest($request),
             'request_method' => static::getRequestMethodIdFromRequest($request),
