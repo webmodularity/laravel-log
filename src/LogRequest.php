@@ -70,9 +70,9 @@ class LogRequest extends Model
     public static function createFromRequest(Request $request)
     {
         return static::firstOrCreate([
-            'url_path_id' => static::getUrlPathIdFromRequest($request),
-            'url_query_string' => static::getQueryStringFromRequest($request),
             'request_method' => static::getRequestMethodIdFromRequest($request),
+            'url_path_id' => static::getUrlPathIdFromRequest($request),
+            'query_string_id' => static::getQueryStringIdFromRequest($request),
             'user_agent_id' => static::getUserAgentIdFromRequest($request),
             'ip_address' => static::getIpAddressFromRequest($request),
             'session_id' => static::getSessionIdFromRequest($request)
@@ -109,27 +109,31 @@ class LogRequest extends Model
             : null;
     }
 
-    public static function getQueryStringFromRequest(Request $request)
-    {
-        $query = $request->query();
-
-        if (is_array($query)) {
-            return http_build_query($query);
-        }
-
-        return $query;
-    }
-
     public static function getUrlPathIdFromRequest(Request $request)
     {
         $urlPath = LogUrlPath::firstOrCreate(['url_path' => $request->path()]);
         return !is_null($urlPath) ? $urlPath->id : null;
     }
 
+    public static function getQueryStringIdFromRequest(Request $request)
+    {
+        $query = $request->query();
+        if (empty($query)) {
+            return null;
+        }
+        $queryString = is_array($query) ? http_build_query($query) : $query;
+        $queryStringLog = LogQueryString::firstOrCreateFromQueryString($queryString);
+        return !is_null($queryStringLog) ? $queryStringLog->id : null;
+    }
+
     public static function getUserAgentIdFromRequest(Request $request)
     {
-        $userAgent = LogUserAgent::firstOrCreateFromUserAgent($request->header('User-Agent'));
-        return !is_null($userAgent) ? $userAgent->id : null;
+        $userAgent = $request->header('User-Agent');
+        if (empty($userAgent)) {
+            return null;
+        }
+        $userAgentLog = LogUserAgent::firstOrCreateFromUserAgent($userAgent);
+        return !is_null($userAgentLog) ? $userAgentLog->id : null;
     }
 
     public static function getIpAddressFromRequest(Request $request)
