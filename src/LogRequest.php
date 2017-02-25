@@ -130,7 +130,7 @@ class LogRequest extends Model
     public static function getUserAgentIdFromRequest(Request $request)
     {
         $userAgent = $request->header('User-Agent') ?: '';
-        return LogUserAgent::firstOrCreateFromUserAgent($userAgent);
+        return LogUserAgent::firstOrCreateFromUserAgent($userAgent)->id;
     }
 
     public static function getIpAddressFromRequest(Request $request)

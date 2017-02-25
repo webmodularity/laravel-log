@@ -27,7 +27,7 @@ class LogQueryString extends Model
      *
      * @var array
      */
-    protected $hidden = ['query_string_hash'];
+    //protected $hidden = ['query_string_hash'];
 
     /**
      * Creates a hash from query string
