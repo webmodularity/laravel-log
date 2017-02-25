@@ -11,14 +11,15 @@ use ReflectionClass;
  *
  * @property int $id
  * @property int $url_path_id
- * @property string $url_query_string
  * @property int $request_method
+ * @property string $query_string_id
  * @property int $user_agent_id
  * @property mixed $ip_address
  * @property string $session_id
  * @property string $created_at
  * @property-read \WebModularity\LaravelLog\LogUrlPath $urlPath
  * @property-read \WebModularity\LaravelLog\LogUserAgent $userAgent
+ * @property-read \WebModularity\LaravelLog\LogQueryString $queryString
  */
 class LogRequest extends Model
 {
@@ -34,8 +35,8 @@ class LogRequest extends Model
      */
     protected $fillable = [
         'url_path_id',
-        'url_query_string',
         'request_method',
+        'query_string_id',
         'user_agent_id',
         'ip_address',
         'session_id'
@@ -43,12 +44,17 @@ class LogRequest extends Model
 
     public function urlPath()
     {
-        return $this->belongsTo('WebModularity\LaravelLog\LogUrlPath');
+        return $this->belongsTo(LogUrlPath::class);
     }
 
     public function userAgent()
     {
-        return $this->belongsTo('WebModularity\LaravelLog\LogUserAgent');
+        return $this->belongsTo(LogUserAgent::class);
+    }
+
+    public function queryString()
+    {
+        return $this->belongsTo(LogQueryString::class);
     }
 
 
@@ -83,7 +89,7 @@ class LogRequest extends Model
      * Attempts to convert method passed from HTTP Request into ID stored in constants
      * starting with METHOD_ for storage.
      * @param Request $request
-     * @return int|null The ID associated with METHOD_ constant or null if no match found
+     * @return int The ID associated with METHOD_ constant or METHOD_GET by default
      */
     public static function getRequestMethodIdFromRequest(Request $request)
     {
@@ -94,7 +100,7 @@ class LogRequest extends Model
                 return $constantValue;
             }
         }
-        return null;
+        return static::METHOD_GET;
     }
 
     public static function getMethodFromRequest(Request $request)
@@ -106,34 +112,25 @@ class LogRequest extends Model
     {
         return $request->session()->isValidId($request->session()->getId())
             ? $request->session()->getId()
-            : null;
+            : '';
     }
 
     public static function getUrlPathIdFromRequest(Request $request)
     {
-        $urlPath = LogUrlPath::firstOrCreate(['url_path' => $request->path()]);
-        return !is_null($urlPath) ? $urlPath->id : null;
+        return LogUrlPath::firstOrCreate(['url_path' => $request->path()])->id;
     }
 
     public static function getQueryStringIdFromRequest(Request $request)
     {
-        $query = $request->query();
-        if (empty($query)) {
-            return null;
-        }
+        $query = $request->query() ?: '';
         $queryString = is_array($query) ? http_build_query($query) : $query;
-        $queryStringLog = LogQueryString::firstOrCreateFromQueryString($queryString);
-        return !is_null($queryStringLog) ? $queryStringLog->id : null;
+        return LogQueryString::firstOrCreateFromQueryString($queryString)->id;
     }
 
     public static function getUserAgentIdFromRequest(Request $request)
     {
-        $userAgent = $request->header('User-Agent');
-        if (empty($userAgent)) {
-            return null;
-        }
-        $userAgentLog = LogUserAgent::firstOrCreateFromUserAgent($userAgent);
-        return !is_null($userAgentLog) ? $userAgentLog->id : null;
+        $userAgent = $request->header('User-Agent') ?: '';
+        return LogUserAgent::firstOrCreateFromUserAgent($userAgent);
     }
 
     public static function getIpAddressFromRequest(Request $request)
