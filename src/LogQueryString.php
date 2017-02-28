@@ -31,22 +31,4 @@ class LogQueryString extends Model
     {
         return hex2bin(md5($queryString));
     }
-
-    /**
-     * Takes a query string and returns the associated LogQueryString Model.
-     * Will create new record if no LogQueryString is found.
-     * @param string $queryString The query string from Request
-     * @return static|null
-     */
-    public static function firstOrCreateFromQueryString($queryString)
-    {
-        if (empty($queryString)) {
-            return null;
-        }
-
-        return static::firstOrCreate(
-            ['query_string_hash' => static::hashQueryString($queryString)],
-            ['query_string' => $queryString]
-        );
-    }
 }

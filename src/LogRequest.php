@@ -2,6 +2,7 @@
 
 namespace WebModularity\LaravelLog;
 
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
@@ -11,12 +12,13 @@ use Illuminate\Http\Request;
  * @property int $id
  * @property int $request_method_id
  * @property int $url_path_id
- * @property string $query_string_id
+ * @property int $query_string_id
  * @property int $user_agent_id
- * @property mixed $ip_address
+ * @property int $ip_address_id
  * @property bool $is_ajax
  * @property string $session_id
  * @property string $created_at
+ * @property-read \WebModularity\LaravelLog\LogRequestMethod $requestMethod
  * @property-read \WebModularity\LaravelLog\LogUrlPath $urlPath
  * @property-read \WebModularity\LaravelLog\LogUserAgent $userAgent
  * @property-read \WebModularity\LaravelLog\LogQueryString $queryString
@@ -74,56 +76,68 @@ class LogRequest extends Model
     public static function createFromRequest(Request $request)
     {
         return static::firstOrCreate([
-            'request_method_id' => static::getRequestMethodIdFromRequest($request),
-            'url_path_id' => static::getUrlPathIdFromRequest($request),
-            'query_string_id' => static::getQueryStringIdFromRequest($request),
-            'user_agent_id' => static::getUserAgentIdFromRequest($request),
-            'ip_address_id' => static::getIpAddressIdFromRequest($request),
-            'session_id' => static::getSessionIdFromRequest($request),
+            'request_method_id' => static::getRequestMethodId($request->method()),
+            'url_path_id' => static::getUrlPathId($request->path()),
+            'query_string_id' => static::getQueryStringId($request->query()),
+            'user_agent_id' => static::getUserAgentId($request->header('User-Agent')),
+            'ip_address_id' => static::getIpAddressId($request->ip()),
+            'session_id' => static::getSessionId($request->session()),
             'is_ajax' => $request->ajax()
         ]);
     }
 
-    public static function getRequestMethodIdFromRequest(Request $request)
+    public static function getRequestMethodId($method)
     {
-        return LogRequestMethod::where('method', $request->method())->first()->id
+        return LogRequestMethod::where('method', $method)->first()->id
             ?: LogRequestMethod::where('method', 'GET')->first()->id;
     }
 
-    public static function getSessionIdFromRequest(Request $request)
+    public static function getIpAddressId($ipAddress)
     {
-        return $request->session()->isValidId($request->session()->getId())
-            ? $request->session()->getId()
-            : null;
+        return LogIpAddress::firstOrCreate(
+            ['ip' => LogIpAddress::encryptIpAddress($ipAddress)],
+            ['ip' => $ipAddress]
+        )->id;
     }
 
-    public static function getIpAddressIdFromRequest(Request $request)
+    public static function getUrlPathId($urlPath)
     {
-        $ipAddress = $request->ip();
-        $logIpAddress = LogIpAddress::where('ip_address', LogIpAddress::encryptIpAddress($ipAddress))->first();
-        return !is_null($logIpAddress)
-            ? $logIpAddress->id
-            : LogIpAddress::create(['ip_address' => $ipAddress])->id;
+        return LogUrlPath::firstOrCreate(
+            ['url_path' => $urlPath]
+        )->id;
     }
 
-    public static function getUrlPathIdFromRequest(Request $request)
+    public static function getQueryStringId($query)
     {
-        return LogUrlPath::firstOrCreate(['url_path' => $request->path()])->id;
-    }
-
-    public static function getQueryStringIdFromRequest(Request $request)
-    {
-        $query = $request->query();
         if (empty($query)) {
             return null;
         }
         $queryString = is_array($query) ? http_build_query($query) : $query;
-        return LogQueryString::firstOrCreateFromQueryString($queryString)->id;
+
+        return static::firstOrCreate(
+            ['query_string_hash' => LogQueryString::hashQueryString($queryString)],
+            ['query_string' => $queryString]
+        )
+            ->id;
     }
 
-    public static function getUserAgentIdFromRequest(Request $request)
+    public static function getUserAgentId($userAgent)
     {
-        $userAgent = $request->header('User-Agent') ?: '';
-        return LogUserAgent::firstOrCreateFromUserAgent($userAgent)->id;
+        if (empty($userAgent)) {
+            return null;
+        }
+
+        return static::firstOrCreate(
+            ['user_agent_hash' => LogUserAgent::hashUserAgent($userAgent)],
+            ['user_agent' => $userAgent]
+        )
+            ->id;
+    }
+
+    public static function getSessionId(Session $session)
+    {
+        return $session->isValidId($session->getId())
+            ? $session->getId()
+            : null;
     }
 }

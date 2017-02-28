@@ -28,7 +28,7 @@ class LogIpAddress extends Model
 
     public function setIpAttribute($value)
     {
-        $this->attributes['ip_address'] = static::encryptIpAddress($value);
+        $this->attributes['ip'] = static::encryptIpAddress($value);
     }
 
     public static function decryptIpAddress($ipAddress)

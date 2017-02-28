@@ -41,13 +41,6 @@ class LogUserAgent extends Model
      */
     public static function firstOrCreateFromUserAgent($userAgentString)
     {
-        if (empty($userAgentString)) {
-            return null;
-        }
 
-        return static::firstOrCreate(
-            ['user_agent_hash' => static::hashUserAgent($userAgentString)],
-            ['user_agent' => $userAgentString]
-        );
     }
 }
