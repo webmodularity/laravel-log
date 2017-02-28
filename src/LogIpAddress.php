@@ -48,7 +48,7 @@ class LogIpAddress extends Model
      * @param  array  $values
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function firstOrCreate(array $attributes, array $values = [])
+    public static function firstOrCreate(array $attributes, array $values = [])
     {
         $parsedAttributes = [];
         foreach ($parsedAttributes as $key => $value) {
@@ -59,12 +59,10 @@ class LogIpAddress extends Model
             }
         }
 
-        if (! is_null($instance = $this->where($parsedAttributes)->first())) {
+        if (! is_null($instance = static::where($parsedAttributes)->first())) {
             return $instance;
         }
-        $instance = $this->model->newInstance($attributes + $values)->setConnection(
-            $this->query->getConnection()->getName()
-        );
+        $instance = static::newInstance($attributes + $values);
         $instance->save();
         return $instance;
     }
