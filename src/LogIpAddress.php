@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
  * WebModularity\LaravelLog\LogIpAddress
  *
  * @property int $id
- * @property mixed $ip_address
+ * @property mixed $ip
  */
 class LogIpAddress extends Model
 {
@@ -19,14 +19,14 @@ class LogIpAddress extends Model
      *
      * @var array
      */
-    protected $fillable = ['ip_address'];
+    protected $fillable = ['ip'];
 
-    public function getIpAddressAttribute($value)
+    public function getIpAttribute($value)
     {
         return static::decryptIpAddress($value);
     }
 
-    public function setIpAddressAttribute($value)
+    public function setIpAttribute($value)
     {
         $this->attributes['ip_address'] = static::encryptIpAddress($value);
     }
