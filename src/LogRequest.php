@@ -92,12 +92,21 @@ class LogRequest extends Model
             ?: LogRequestMethod::where('method', 'GET')->first()->id;
     }
 
-    public static function getIpAddressId($ipAddress)
+    public static function getIpAddressId($ip)
     {
-        return LogIpAddress::firstOrCreate(
-            //['ip' => LogIpAddress::encryptIpAddress($ipAddress)],
-            ['ip' => $ipAddress]
-        )->id;
+        $ipAddress = new LogIpAddress(
+            [
+                'ip' => $ip
+            ]
+        );
+        $logIpAddress = LogIpAddress::where('ip', $ipAddress->ip)->first();
+
+        if (!is_null($logIpAddress)) {
+            return $logIpAddress->id;
+        }
+
+        $ipAddress->save();
+        return $ipAddress->id;
     }
 
     public static function getUrlPathId($urlPath)
