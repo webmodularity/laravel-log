@@ -4,14 +4,13 @@ namespace WebModularity\LaravelLog;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use ReflectionClass;
 
 /**
  * WebModularity\LaravelLog\LogRequest
  *
  * @property int $id
+ * @property int $request_method_id
  * @property int $url_path_id
- * @property int $request_method
  * @property string $query_string_id
  * @property int $user_agent_id
  * @property mixed $ip_address
@@ -24,9 +23,6 @@ use ReflectionClass;
  */
 class LogRequest extends Model
 {
-    const METHOD_GET = 1;
-    const METHOD_POST = 2;
-
     const UPDATED_AT = null;
 
     /**
@@ -36,12 +32,17 @@ class LogRequest extends Model
      */
     protected $fillable = [
         'url_path_id',
-        'request_method',
+        'request_method_id',
         'query_string_id',
         'user_agent_id',
         'ip_address_id',
         'session_id'
     ];
+
+    public function requestMethod()
+    {
+        return $this->belongsTo(LogRequestMethod::class);
+    }
 
     public function urlPath()
     {
@@ -71,7 +72,7 @@ class LogRequest extends Model
     public static function createFromRequest(Request $request)
     {
         return static::firstOrCreate([
-            'request_method' => static::getRequestMethodIdFromRequest($request),
+            'request_method_id' => static::getRequestMethodIdFromRequest($request),
             'url_path_id' => static::getUrlPathIdFromRequest($request),
             'query_string_id' => static::getQueryStringIdFromRequest($request),
             'user_agent_id' => static::getUserAgentIdFromRequest($request),
@@ -80,27 +81,10 @@ class LogRequest extends Model
         ]);
     }
 
-    /**
-     * Attempts to convert method passed from HTTP Request into ID stored in constants
-     * starting with METHOD_ for storage.
-     * @param Request $request
-     * @return int The ID associated with METHOD_ constant or METHOD_GET by default
-     */
     public static function getRequestMethodIdFromRequest(Request $request)
     {
-        $class = new ReflectionClass(__CLASS__);
-        $requestMethod = static::getMethodFromRequest($request);
-        foreach ($class->getConstants() as $constantName => $constantValue) {
-            if ('METHOD_' . $requestMethod == $constantName) {
-                return $constantValue;
-            }
-        }
-        return static::METHOD_GET;
-    }
-
-    public static function getMethodFromRequest(Request $request)
-    {
-        return $request->method();
+        return LogRequestMethod::where('method', $request->method())->first()
+            ?: LogRequestMethod::where('method', 'GET')->first();
     }
 
     public static function getSessionIdFromRequest(Request $request)
