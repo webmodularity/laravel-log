@@ -50,19 +50,15 @@ class LogIpAddress extends Model
      */
     public static function firstOrCreate(array $attributes, array $values = [])
     {
-        $parsedAttributes = [];
-        foreach ($parsedAttributes as $key => $value) {
-            if ($key == 'ip') {
-                $parsedAttributes[$key] = static::encryptIpAddress($value);
-            } else {
-                $parsedAttributes[$key] = $value;
-            }
-        }
+        $parsedAttributes = [
+            'ip' => static::encryptIpAddress($attributes['ip'])
+            ] + $attributes;
 
         if (! is_null($instance = static::where($parsedAttributes)->first())) {
             return $instance;
         }
-        $instance = static::newInstance($attributes + $values);
+
+        $instance = new static($attributes + $values);
         $instance->save();
         return $instance;
     }
