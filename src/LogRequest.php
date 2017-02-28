@@ -95,7 +95,7 @@ class LogRequest extends Model
     public static function getIpAddressId($ipAddress)
     {
         return LogIpAddress::firstOrCreate(
-            ['ip' => LogIpAddress::encryptIpAddress($ipAddress)],
+            //['ip' => LogIpAddress::encryptIpAddress($ipAddress)],
             ['ip' => $ipAddress]
         )->id;
     }
