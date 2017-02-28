@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
  * @property string $query_string_id
  * @property int $user_agent_id
  * @property mixed $ip_address
+ * @property bool $is_ajax
  * @property string $session_id
  * @property string $created_at
  * @property-read \WebModularity\LaravelLog\LogUrlPath $urlPath
@@ -36,7 +37,8 @@ class LogRequest extends Model
         'query_string_id',
         'user_agent_id',
         'ip_address_id',
-        'session_id'
+        'session_id',
+        'is_ajax'
     ];
 
     public function requestMethod()
@@ -77,14 +79,15 @@ class LogRequest extends Model
             'query_string_id' => static::getQueryStringIdFromRequest($request),
             'user_agent_id' => static::getUserAgentIdFromRequest($request),
             'ip_address_id' => static::getIpAddressIdFromRequest($request),
-            'session_id' => static::getSessionIdFromRequest($request)
+            'session_id' => static::getSessionIdFromRequest($request),
+            'is_ajax' => $request->ajax()
         ]);
     }
 
     public static function getRequestMethodIdFromRequest(Request $request)
     {
-        return LogRequestMethod::where('method', $request->method())->first()
-            ?: LogRequestMethod::where('method', 'GET')->first();
+        return LogRequestMethod::where('method', $request->method())->first()->id
+            ?: LogRequestMethod::where('method', 'GET')->first()->id;
     }
 
     public static function getSessionIdFromRequest(Request $request)

@@ -20,7 +20,7 @@ class CreateLogRequests extends Migration
             $table->unsignedInteger('user_agent_id');
             $table->string('session_id', 255)->nullable();
             $table->unsignedInteger('query_string_id')->nullable();
-            $table->boolean('is_ajax')->default(0);
+            $table->boolean('is_ajax');
             $table->timestamp('created_at');
             $table->unique(
                 ['request_method_id', 'ip_address_id', 'url_path_id', 'user_agent_id', 'session_id', 'query_string_id'],
