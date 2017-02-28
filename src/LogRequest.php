@@ -114,7 +114,7 @@ class LogRequest extends Model
         }
         $queryString = is_array($query) ? http_build_query($query) : $query;
 
-        return static::firstOrCreate(
+        return LogQueryString::firstOrCreate(
             ['query_string_hash' => LogQueryString::hashQueryString($queryString)],
             ['query_string' => $queryString]
         )
@@ -127,7 +127,7 @@ class LogRequest extends Model
             return null;
         }
 
-        return static::firstOrCreate(
+        return LogUserAgent::firstOrCreate(
             ['user_agent_hash' => LogUserAgent::hashUserAgent($userAgent)],
             ['user_agent' => $userAgent]
         )
